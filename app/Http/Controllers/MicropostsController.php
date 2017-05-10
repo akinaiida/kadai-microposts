@@ -7,7 +7,7 @@ use Illuminate\Http\Request;
 use App\Http\Requests;
 use App\Http\Controllers\Controller;
 
-class WelcomeController extends Controller
+class MicropostsController extends Controller
 {
     /**
      * Display a listing of the resource.
@@ -16,17 +16,7 @@ class WelcomeController extends Controller
      */
     public function index()
     {
-        $data = [];
-        if (\Auth::check()) {
-            $user = \Auth::user();
-            $microposts = $user->microposts()->orderBy('created_at', 'desc')->paginate(10);
-
-            $data = [
-                'user' => $user,
-                'microposts' => $microposts,
-            ];
-        }
-        return view('welcome', $data);
+        //
     }
 
     /**
@@ -47,7 +37,15 @@ class WelcomeController extends Controller
      */
     public function store(Request $request)
     {
-        //
+        $this->validate($request, [
+            'content' => 'required|max:255',
+        ]);
+        
+        $request->user()->microposts()->create([
+            'content' => $request->content,
+        ]);
+    
+        return redirect('/');
     }
 
     /**
@@ -92,6 +90,12 @@ class WelcomeController extends Controller
      */
     public function destroy($id)
     {
-        //
+        $micropost = Micropost::find($id);
+        
+        if (\Auth::user()->id === $micropost->user_id) {
+            $micropost->delete();
+        }
+        
+        return redirect()->back();
     }
 }
