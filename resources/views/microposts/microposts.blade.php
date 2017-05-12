@@ -23,4 +23,3 @@
     </li>
 @endforeach
 </ul>
-{!! $microposts->render() !!}

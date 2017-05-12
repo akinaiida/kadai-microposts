@@ -13,6 +13,12 @@
                 {!! Form::close() !!}
             </aside>
             <div class="col-xs-8">
+                @if (isset($microposts))
+                    @include('microposts.microposts', ['microposts' => $microposts])
+<!--                    @include('microposts.microposts', ['microposts' => $microposts]) -->
+                @else
+                    <p>Hello</p>
+                @endif
             </div>
         </div>
     @else
