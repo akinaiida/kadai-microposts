@@ -11,6 +11,12 @@
                     </div>
                     {!! Form::submit('Post', ['class' => 'btn btn-primary btn-block']) !!}
                 {!! Form::close() !!}
+                    <div style="padding:50px;">
+                        {!! Form::open(['route' => ['favorite.favorite', $user->id]]) !!}
+                            {!! Form::submit('Favorite', ['class' => "btn btn-success btn-block"]) !!}
+                        {!! Form::close() !!}
+                    </div>
+                
             </aside>
             <div class="col-xs-8">
                 @if (isset($microposts))
