@@ -10,6 +10,8 @@ use Illuminate\Contracts\Auth\Authenticatable as AuthenticatableContract;
 use Illuminate\Contracts\Auth\Access\Authorizable as AuthorizableContract;
 use Illuminate\Contracts\Auth\CanResetPassword as CanResetPasswordContract;
 
+use DB;
+
 class User extends Model implements AuthenticatableContract,
                                     AuthorizableContract,
                                     CanResetPasswordContract
@@ -104,33 +106,29 @@ class User extends Model implements AuthenticatableContract,
         return $this->belongsToMany(User::class, 'favorites', 'user_id', 'micropost_id')->withTimestamps();
     }
     
-    public function favorite($userId)
+    public function favorite($userId, $micropost_id)
     {
         // 既にお気に入りしているかの確認
-        $exist = $this->is_favorite($userId);
-        // 自分自身ではないかの確認
-        $its_me = $this->id == $userId;
+        $exist = $this->is_favorite($userId, $micropost_id);
         
-        if ($exist || $its_me) {
+        if ($exist) {
             // 既にお気に入りしていれば何もしない
             return false;
         } else {
             // 未お気に入りであればお気に入りする
-            $this->favorite_users()->attach($userId);
+            $this->favorite_users()->attach($micropost_id);
             return true;
         }
     }
     
-    public function unfavorite($userId)
+    public function unfavorite($userId, $micropost_id)
     {
         // 既にお気に入りしているかの確認
-        $exist = $this->is_favorite($userId);
-        // 自分自身ではないかの確認
-        $its_me = $this->id == $userId;
+        $exist = $this->is_favorite($userId, $micropost_id);
         
-        if ($exist && !$its_me) {
-            // 既にフォローしていればお気に入りを外す
-            $this->favorite_users()->detach($userId);
+        if ($exist) {
+            // 既にお気に入りしていればお気に入りを外す
+            $this->favorite_users()->detach($micropost_id);
             return true;
         } else {
             // 未お気に入りであれば何もしない
@@ -138,7 +136,9 @@ class User extends Model implements AuthenticatableContract,
         }
     }
     
-    public function is_favorite($micropost_id) {
-        return $this->favorite_users()->where('micropost_id', $micropost_id)->exists();
+    public function is_favorite($UserId, $micropost_id) {
+//        return $this->favorite_users()->where('micropost_id', $micropost_id)->exists();
+        $favorites = DB::table('favorites')->where('user_id', $UserId)->where('micropost_id', $micropost_id)->exists();
+        return $favorites;
     }
 }

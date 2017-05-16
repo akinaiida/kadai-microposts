@@ -37,9 +37,10 @@ class FavoriteController extends Controller
      * @param  \Illuminate\Http\Request  $request
      * @return \Illuminate\Http\Response
      */
-    public function store(Request $request, $id)
+    public function store(Request $request, $mid)
     {
-        \Auth::user()->favorite($id);
+        $userid = \Auth::user()->id;
+        \Auth::user()->favorite($userid, $mid);
         return redirect()->back();
     }
 
@@ -51,32 +52,21 @@ class FavoriteController extends Controller
      */
     public function show($id)
     {
-
         $user = \Auth::user();
         $userid = $user->find($id);
         $favorites = DB::table('favorites')->select('micropost_id')->where('user_id', $userid['id'])->get();
-        print_r($favorites);
 
         $favorite = array();
         foreach ($favorites as $value) {
-            print_r($value->micropost_id);
             array_push($favorite, $value->micropost_id);
         }
-        print_r($favorite);
 
-        $microposts = DB::table('microposts')->whereIn('id', $favorite)->orderBy('created_at', 'desc')->get();
+        $microposts = $user->feed_microposts()->whereIn('id', $favorite)->orderBy('created_at', 'desc')->paginate(5);
 
-        print_r($microposts);
-        exit;
-
-        $data = [
-            'user' => $user,
+        return view('users.favorites', [
             'microposts' => $microposts,
-        ];
-        
-        $data += $this->counts($user);
-        
-        return view('users.show', $data);
+        ]);
+
     }
 
     /**
@@ -108,9 +98,10 @@ class FavoriteController extends Controller
      * @param  int  $id
      * @return \Illuminate\Http\Response
      */
-    public function destroy($id)
+    public function destroy($mid)
     {
-        \Auth::user()->unfavorite($id);
+        $userid = \Auth::user()->id;
+        \Auth::user()->unfavorite($userid, $mid);
         return redirect()->back();
     }
 }

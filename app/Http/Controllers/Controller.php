@@ -21,8 +21,6 @@ abstract class Controller extends BaseController
             'count_microposts' => $count_microposts,
             'count_followings' => $count_followings,
             'count_followers' => $count_followers,
-//            'count_favorite_users' => $count_favorite_users,
-//            'count_favorite_mircroposts' => $count_favorite_mircroposts,
         ];
     }
 }
