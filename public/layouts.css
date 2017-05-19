@@ -1,0 +1,12 @@
+#microposts_area {
+    clear: both;
+}
+
+#button_area {
+    float: left;
+    margin-right: 10px;
+}
+
+#favorite_button {
+    padding: 50px;
+}

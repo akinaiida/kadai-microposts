@@ -3,6 +3,7 @@
 @section('content')
     @if (Auth::check())
         <?php $user = Auth::user(); ?>
+        <link href="/layouts.css" rel="stylesheet" type="text/css">
         <div class="row">
             <aside class="col-xs-4">
                 {!! Form::open(['route' => 'microposts.store']) !!}
@@ -11,7 +12,7 @@
                     </div>
                     {!! Form::submit('Post', ['class' => 'btn btn-primary btn-block']) !!}
                 {!! Form::close() !!}
-                    <div style="padding:50px;">
+                    <div id="favorite_button">
                         {!! Form::open(['route' => ['favorite.favorite', $user->id]]) !!}
                             {!! Form::submit('Favorite', ['class' => "btn btn-success btn-block"]) !!}
                         {!! Form::close() !!}
